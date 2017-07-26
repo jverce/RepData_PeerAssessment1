@@ -8,6 +8,9 @@
 unzip("activity.zip")
 data <- read.csv("activity.csv", header=T, sep=",")
 data$date <- as.Date(data$date)
+
+library(knitr)
+opts_chunk$set(fig.path="figure/")
 ```
 
 
@@ -25,7 +28,7 @@ hist(
 )
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+![](figure/unnamed-chunk-2-1.png)<!-- -->
 
 As per the mean and median, we have the following:
 

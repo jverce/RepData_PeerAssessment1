@@ -12,6 +12,9 @@ output:
 unzip("activity.zip")
 data <- read.csv("activity.csv", header=T, sep=",")
 data$date <- as.Date(data$date)
+
+library(knitr)
+opts_chunk$set(fig.path="figure/")
 ```
 
 
