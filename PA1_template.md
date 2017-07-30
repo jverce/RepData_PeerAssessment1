@@ -66,7 +66,7 @@ plot(
 points(intervals, avg.per.interval, col="darkgreen", pch=19, cex=.5)
 ```
 
-![](figure/unnamed-chunk-4-1.png)<!-- -->
+![](figure/unnamed-chunk-3-1.png)<!-- -->
 
 As per the 5-min interval with the highest average of steps, we apply the `max` function to it:
 
@@ -82,6 +82,84 @@ names(index)
 
 ## Imputing missing values
 
+There are lots of records that don't contain valid data (i.e. `NA` values). Specifically:
+
+```r
+sum(is.na(data$steps))
+```
+
+```
+## [1] 2304
+```
+
+To overcome this issue we'll fill in these `NA` values with the median for that specific 5-min interval where the data is missing.
+
+```r
+med.per.interval <- with(data, tapply(steps, interval, median, na.rm=T))
+
+# We'll apply this replace function to all NA elements.
+put.median <- function(steps, interval) {
+  if (is.na(steps)) {
+    steps <- med.per.interval[toString(interval)]
+  }
+  steps
+}
+steps.new <- with(data, mapply(put.median, steps, interval))
+
+data.new <- data
+data.new$steps <- steps.new
+```
+
+Now we need to measure the impact of imputting this data. For that we'll make a histogram of the total of steps taken each day. Then we'll calculate the **mean** and **median** of the total steps per day.
 
 
+```r
+par(mfrow=c(1, 2))
+
+steps.per.date.new <- with(data.new, tapply(steps, date, sum, na.rm=T))
+
+hist(
+  steps.per.date,
+  xlab="Total steps per date", main="Steps per Date",
+  col="darkgreen")
+hist(
+  steps.per.date.new,
+  xlab="Total steps per date", main="Steps per Date (without NA's)",
+  col="darkblue")
+```
+
+![](figure/unnamed-chunk-7-1.png)<!-- -->
+
+As per the mean and median of the new filled data, we have the following:
+
+```r
+mean(steps.per.date.new)
+```
+
+```
+## [1] 9503.869
+```
+
+```r
+median(steps.per.date.new)
+```
+
+```
+## [1] 10395
+```
+
+If we compare both sets of metrics, we'll see that the *median* does not present any changes, and the mean changes by only a bit:
+
+```r
+avg.old <- mean(steps.per.date)
+avg.new <- mean(steps.per.date.new)
+variation <- (avg.new - avg.old) / avg.old
+
+library(scales)
+percent(variation)
+```
+
+```
+## [1] "1.6%"
+```
 ## Are there differences in activity patterns between weekdays and weekends?
