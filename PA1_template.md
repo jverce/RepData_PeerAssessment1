@@ -63,6 +63,7 @@ plot(
   main="Average Across all Days for each Interval",
   col="darkgreen", type="l"
 )
+points(intervals, avg.per.interval, col="darkgreen", pch=19, cex=.5)
 ```
 
 ![](figure/unnamed-chunk-4-1.png)<!-- -->
