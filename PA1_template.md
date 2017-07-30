@@ -130,6 +130,8 @@ hist(
 
 ![](figure/unnamed-chunk-7-1.png)<!-- -->
 
+As we can see, these histograms look pretty similar, specially in the more dense sections.
+
 As per the mean and median of the new filled data, we have the following:
 
 ```r
@@ -162,4 +164,52 @@ percent(variation)
 ```
 ## [1] "1.6%"
 ```
+
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Let's analize the data taking into account the different days of the week. First we'll create a new column in our existing data frame (with the `NA` values removed) that indicates if the date is a weekday or not:
+
+```r
+dow <- weekdays(data.new$date)
+dow <- sub("Monday", "weekday", dow)
+dow <- sub("Tuesday", "weekday", dow)
+dow <- sub("Wednesday", "weekday", dow)
+dow <- sub("Thursday", "weekday", dow)
+dow <- sub("Friday", "weekday", dow)
+dow <- sub("Saturday", "weekend", dow)
+dow <- sub("Sunday", "weekend", dow)
+
+data.new$type.of.day <- dow
+```
+
+Now let's summarize the data based on this dimension and plot it as a time series:
+
+```r
+data.weekdays <- subset(data.new, type.of.day == "weekday")
+avg.per.interval.weekdays <- with(data.weekdays, tapply(steps, interval, mean, na.rm=T))
+
+data.weekends <- subset(data.new, type.of.day == "weekend")
+avg.per.interval.weekends <- with(data.weekends, tapply(steps, interval, mean, na.rm=T))
+
+par(mfrow=c(2, 1))
+
+plot(
+  intervals,
+  avg.per.interval.weekdays,
+  xlab="5-minute Interval", ylab="Average",
+  main="Average Across all Weekdays for each Interval",
+  col="darkred", type="l"
+)
+points(intervals, avg.per.interval.weekdays, col="darkred", pch=19, cex=.5)
+
+plot(
+  intervals,
+  avg.per.interval.weekends,
+  xlab="5-minute Interval", ylab="Average",
+  main="Average Across all Weekends for each Interval",
+  col="darkcyan", type="l"
+)
+points(intervals, avg.per.interval.weekends, col="darkcyan", pch=19, cex=.5)
+```
+
+![](figure/unnamed-chunk-11-1.png)<!-- -->
